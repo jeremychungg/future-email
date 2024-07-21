@@ -1,33 +1,34 @@
-require('dotenv').config();
 const nodemailer = require('nodemailer');
-const { Client } = require('pg'); // or any database client you are using
 
-const dbClient = new Client({
-  connectionString: process.env.DATABASE_URL // replace with your actual database connection string
-});
-dbClient.connect();
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
-
-exports.handler = async function (event, context) {
+exports.handler = async function(event, context) {
   const { email, message, datetime } = JSON.parse(event.body);
+
+  // Create a transport instance with your email service
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE, // e.g., 'gmail'
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Scheduled Email',
+    text: message,
+  };
+
   try {
-    // Store email details in the database
-    await dbClient.query('INSERT INTO scheduled_emails (email, message, datetime) VALUES ($1, $2, $3)', [email, message, datetime]);
+    await transporter.sendMail(mailOptions);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Email scheduled successfully!' })
+      body: JSON.stringify({ message: 'Email sent successfully' }),
     };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Failed to schedule email.' })
+      body: JSON.stringify({ message: 'Failed to send email', error }),
     };
   }
 };
