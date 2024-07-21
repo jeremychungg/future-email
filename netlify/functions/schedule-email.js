@@ -3,17 +3,10 @@ const nodemailer = require('nodemailer');
 exports.handler = async function(event, context) {
   try {
     // Parse the request body
-    const { email, message, datetime } = JSON.parse(event.body);
+    const { email, message } = JSON.parse(event.body);
 
-    // Calculate the delay
-    const now = new Date();
-    const scheduledTime = new Date(datetime);
-    const delay = scheduledTime.getTime() - now.getTime();
-
-    if (delay <= 0) {
-      // If the scheduled time is in the past or now, send the email immediately
-      throw new Error('Scheduled time must be in the future.');
-    }
+    // Set a fixed delay of 10 seconds
+    const delay = 10000; // 10 seconds in milliseconds
 
     // Use a promise to delay sending the email
     await new Promise(resolve => setTimeout(resolve, delay));
@@ -41,7 +34,7 @@ exports.handler = async function(event, context) {
     // Return success response
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Email scheduled and sent successfully' }),
+      body: JSON.stringify({ message: 'Email sent successfully after 10 seconds' }),
     };
   } catch (error) {
     // Return error response
