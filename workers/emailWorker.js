@@ -33,7 +33,11 @@ const processQueue = async () => {
   while (true) {
     try {
       const [_, emailData] = await brpopAsync('emailQueue', 0);
-      const { email, subject, message } = JSON.parse(emailData);
+      const { email, subject, message, delayMs } = JSON.parse(emailData);
+
+      console.log(`Waiting for ${delayMs / 1000} seconds before sending email to ${email}`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+
       console.log(`Sending email to ${email}`);
       await sendEmail(email, subject, message);
       console.log(`Email sent to ${email}`);

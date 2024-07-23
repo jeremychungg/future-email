@@ -3,7 +3,7 @@ const { promisify } = require('util');
 require('dotenv').config();
 
 exports.handler = async (event, context) => {
-  const { email, subject, message } = JSON.parse(event.body);
+  const { email, subject, message, delay } = JSON.parse(event.body);
 
   const client = redis.createClient({
     host: process.env.REDIS_HOST,
@@ -12,7 +12,10 @@ exports.handler = async (event, context) => {
 
   const lpushAsync = promisify(client.lpush).bind(client);
 
-  const emailData = JSON.stringify({ email, subject, message });
+  // Calculate the delay in milliseconds
+  const delayMs = delay * 1000;
+  
+  const emailData = JSON.stringify({ email, subject, message, delayMs });
 
   try {
     await lpushAsync('emailQueue', emailData);
