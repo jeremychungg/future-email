@@ -1,28 +1,61 @@
-/* styles.css */
-
-body {
-  font-family: Arial, sans-serif;
-  text-align: center; /* Centers text horizontally */
-  margin: 0;
-  padding: 0;
+.App {
   display: flex;
-  flex-direction: column;
-  justify-content: center; /* Centers content vertically */
-  height: 100vh; /* Full viewport height */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
 }
 
-header {
-  margin-bottom: 20px;
+h2 {
+  color: #333;
 }
 
-main {
-  margin-top: 20px;
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-h1 {
-  font-size: 2em;
+form div {
+  margin-bottom: 15px;
 }
 
-p {
-  font-size: 1.2em;
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
 }

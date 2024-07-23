@@ -5,18 +5,56 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Web site created using create-react-app" />
+    <meta name="description" content="Schedule an email to be sent in the future." />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>React App</title>
+    <title>Email Scheduler</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+      .container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      input, textarea, button {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-
-    <!-- Add your scheduling form here -->
-    <div style="padding: 20px;">
-      <h2>Schedule an Email</h2>
+    <div id="root"></div> <!-- This is where React mounts the app -->
+    <div class="container">
+      <h1>Schedule an Email</h1>
       <form id="emailForm">
         <div>
           <label for="email">Email:</label>
@@ -37,8 +75,6 @@
         <button type="submit">Send to Future</button>
       </form>
     </div>
-
-    <!-- Include the script for handling form submission -->
     <script src="%PUBLIC_URL%/index.js"></script>
   </body>
 </html>

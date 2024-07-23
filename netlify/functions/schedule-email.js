@@ -1,46 +1,57 @@
 const nodemailer = require('nodemailer');
+const moment = require('moment');  // Ensure moment is imported correctly
 
 exports.handler = async function(event, context) {
   try {
-    // Parse the request body
-    const { email, message } = JSON.parse(event.body);
+    const { email, subject, message, scheduleTime } = JSON.parse(event.body);
 
-    // Set a fixed delay of 10 seconds
-    const delay = 10000; // 10 seconds in milliseconds
+    // Convert scheduleTime to a Date object and calculate delay
+    const sendAt = moment(scheduleTime).toDate();  // Use moment to handle the date
+    const now = new Date();
+    const delay = sendAt - now;
 
-    // Use a promise to delay sending the email
-    await new Promise(resolve => setTimeout(resolve, delay));
+    if (delay < 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Schedule time must be in the future.' })
+      };
+    }
 
-    // Create a transport instance with email service
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE, // e.g., 'gmail'
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // Set a timer to send the email after the delay
+    setTimeout(async () => {
+      // Create a transporter object using the default SMTP transport
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
+      });
 
-    // Email options
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Scheduled Email',
-      text: message,
-    };
+      // Email options
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: subject,
+        text: message
+      };
 
-    // Send the email
-    await transporter.sendMail(mailOptions);
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully!');
+      } catch (error) {
+        console.error('Error sending email:', error.message);
+      }
+    }, delay);
 
-    // Return success response
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Email sent successfully after 10 seconds' }),
+      body: JSON.stringify({ message: 'Email scheduled successfully!' })
     };
   } catch (error) {
-    // Return error response
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Failed to send email', error: error.message }),
+      body: JSON.stringify({ message: 'Failed to schedule email: ' + error.message })
     };
   }
 };

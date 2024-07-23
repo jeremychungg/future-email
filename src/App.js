@@ -1,58 +1,86 @@
-// src/App.js
 import React, { useState } from 'react';
 import './App.css';
 
 function App() {
   const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [datetime, setDatetime] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch('/.netlify/functions/schedule-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, message, datetime })
-    });
-    const result = await response.json();
-    alert(result.message);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = {
+      email,
+      subject,
+      message,
+      scheduleTime
+    };
+
+    try {
+      const response = await fetch('/.netlify/functions/schedule-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      alert(result.message || 'Email scheduled successfully!');
+    } catch (error) {
+      alert('Failed to schedule email: ' + error.message);
+    }
   };
 
   return (
     <div className="App">
-      <h1>Send an Email to the Future</h1>
+      <h1>Schedule an Email</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          Email:
+        <div>
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email"
             required
           />
-        </label>
-        <br />
-        <label>
-          Message:
+        </div>
+        <div>
+          <label htmlFor="subject">Subject:</label>
+          <input
+            type="text"
+            id="subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="Subject"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="message">Message:</label>
           <textarea
+            id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            placeholder="Your message"
             required
-          />
-        </label>
-        <br />
-        <label>
-          Date and Time:
+          ></textarea>
+        </div>
+        <div>
+          <label htmlFor="scheduleTime">Schedule Time:</label>
           <input
             type="datetime-local"
-            value={datetime}
-            onChange={(e) => setDatetime(e.target.value)}
+            id="scheduleTime"
+            value={scheduleTime}
+            onChange={(e) => setScheduleTime(e.target.value)}
             required
           />
-        </label>
-        <br />
+        </div>
         <button type="submit">Send to Future</button>
       </form>
     </div>
