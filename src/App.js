@@ -10,7 +10,6 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Demo mode - GitHub Pages doesn't support backend
     const scheduledDate = new Date(scheduleTime);
     const now = new Date();
     const delay = scheduledDate - now;
@@ -20,16 +19,46 @@ function App() {
       return;
     }
 
-    const days = Math.floor(delay / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((delay % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    // Use backend API if configured, otherwise show demo message
+    const API_URL = process.env.REACT_APP_API_URL || '';
     
-    alert(`✉️ Demo Mode\n\nYour email would be scheduled to:\n📧 ${email}\n📝 Subject: ${subject}\n📅 In ${days} days and ${hours} hours\n\n⚠️ Note: This is a demo. To actually send emails, you'll need to deploy a backend service (like Netlify Functions, Vercel, or AWS Lambda).`);
-    
-    // Reset form
-    setEmail('');
-    setSubject('');
-    setMessage('');
-    setScheduleTime('');
+    if (API_URL) {
+      try {
+        const response = await fetch(`${API_URL}/.netlify/functions/schedule-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, subject, message, scheduleTime })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.message || 'Failed to schedule email');
+        }
+
+        alert('✉️ ' + result.message);
+        
+        // Reset form
+        setEmail('');
+        setSubject('');
+        setMessage('');
+        setScheduleTime('');
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+      }
+    } else {
+      // Demo mode
+      const days = Math.floor(delay / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((delay % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      
+      alert(`✉️ Demo Mode\n\nYour email would be scheduled to:\n📧 ${email}\n📝 Subject: ${subject}\n📅 In ${days} days and ${hours} hours\n\n⚠️ Note: Deploy the backend to actually send emails. See README for instructions.`);
+      
+      // Reset form
+      setEmail('');
+      setSubject('');
+      setMessage('');
+      setScheduleTime('');
+    }
   };
 
   return (
