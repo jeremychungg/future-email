@@ -83,8 +83,7 @@ exports.handler = async function(event, context) {
     console.error('Error:', error);
     return {
       statusCode: 500,
-      headers
-      statusCode: 500,
+      headers,
       body: JSON.stringify({ message: 'Failed to process email: ' + error.message })
     };
   }
