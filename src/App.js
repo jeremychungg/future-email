@@ -3,8 +3,6 @@ import './App.css';
 
 function App() {
   const [email, setEmail] = useState('');
-  const [subject, setSubject] = useState('');
-  const [message, setMessage] = useState('');
   const [scheduleTime, setScheduleTime] = useState('');
 
   const handleSubmit = async (event) => {
@@ -18,6 +16,10 @@ function App() {
       alert('Please select a future date and time.');
       return;
     }
+
+    // Use default subject and message
+    const subject = 'Message from the past';
+    const message = `This email was scheduled on ${now.toLocaleString()} to arrive at ${scheduledDate.toLocaleString()}.`;
 
     // Use backend API if configured, otherwise show demo message
     const API_URL = process.env.REACT_APP_API_URL || '';
@@ -40,8 +42,6 @@ function App() {
         
         // Reset form
         setEmail('');
-        setSubject('');
-        setMessage('');
         setScheduleTime('');
       } catch (error) {
         alert('❌ Error: ' + error.message);
@@ -51,54 +51,31 @@ function App() {
       const days = Math.floor(delay / (1000 * 60 * 60 * 24));
       const hours = Math.floor((delay % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       
-      alert(`✉️ Demo Mode\n\nYour email would be scheduled to:\n📧 ${email}\n📝 Subject: ${subject}\n📅 In ${days} days and ${hours} hours\n\n⚠️ Note: Deploy the backend to actually send emails. See README for instructions.`);
+      alert(`✉️ Demo Mode\n\nYour email would be scheduled to:\n📧 ${email}\n📅 In ${days} days and ${hours} hours\n\n⚠️ Note: Deploy the backend to actually send emails. See README for instructions.`);
       
       // Reset form
       setEmail('');
-      setSubject('');
-      setMessage('');
       setScheduleTime('');
     }
   };
 
   return (
     <div className="App">
-      <h1>Schedule an Email</h1>
+      <h1>Send Email to Future</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email Address:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email"
+            placeholder="your@email.com"
             required
           />
         </div>
         <div>
-          <label htmlFor="subject">Subject:</label>
-          <input
-            type="text"
-            id="subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder="Subject"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="message">Message:</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Your message"
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label htmlFor="scheduleTime">Schedule Time:</label>
+          <label htmlFor="scheduleTime">When:</label>
           <input
             type="datetime-local"
             id="scheduleTime"
