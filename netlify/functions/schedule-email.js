@@ -6,15 +6,14 @@ exports.handler = async function(event, context) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Accept',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
   // Handle preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 204,
-      headers,
+      statusCode: 200,
+      headers: headers,
       body: ''
     };
   }
