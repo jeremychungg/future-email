@@ -2,10 +2,27 @@ const nodemailer = require('nodemailer');
 const moment = require('moment');
 
 exports.handler = async function(event, context) {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ message: 'Method not allowed' })
     };
   }
@@ -17,6 +34,7 @@ exports.handler = async function(event, context) {
     if (!email || !subject || !message || !scheduleTime) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ message: 'All fields are required.' })
       };
     }
@@ -29,6 +47,7 @@ exports.handler = async function(event, context) {
     if (delay < 0) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ message: 'Schedule time must be in the future.' })
       };
     }
@@ -55,6 +74,7 @@ exports.handler = async function(event, context) {
       await transporter.sendMail(mailOptions);
       
       return {
+        headers,
         statusCode: 200,
         body: JSON.stringify({ 
           message: 'Email sent successfully! (Note: For times less than 5 minutes, emails are sent immediately)' 
@@ -64,7 +84,7 @@ exports.handler = async function(event, context) {
       // For longer delays, you would need to integrate with a scheduling service
       // like Netlify Scheduled Functions, AWS SES with delay, or a third-party service
       return {
-        statusCode: 200,
+        headers,
         body: JSON.stringify({ 
           message: `Email scheduled for ${moment(sendAt).format('LLLL')}. Note: This is a demo - for production, integrate with a scheduling service like Netlify Scheduled Functions or AWS EventBridge.` 
         })
@@ -73,6 +93,8 @@ exports.handler = async function(event, context) {
   } catch (error) {
     console.error('Error:', error);
     return {
+      statusCode: 500,
+      headers
       statusCode: 500,
       body: JSON.stringify({ message: 'Failed to process email: ' + error.message })
     };
