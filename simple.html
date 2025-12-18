@@ -157,25 +157,35 @@
             successMsg.style.display = 'none';
             errorMsg.style.display = 'none';
             
+            console.log('Sending to:', 'https://futureemail.netlify.app/.netlify/functions/schedule-email');
+            console.log('Data:', { email, subject, message, scheduleTime });
+            
             try {
                 const response = await fetch('https://futureemail.netlify.app/.netlify/functions/schedule-email', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ email, subject, message, scheduleTime })
                 });
                 
+                console.log('Response status:', response.status);
+                
                 const result = await response.json();
+                console.log('Result:', result);
                 
                 if (!response.ok) {
                     throw new Error(result.message || 'Failed to send email');
                 }
                 
-                successMsg.textContent = result.message;
+                successMsg.textContent = '✅ ' + result.message;
                 successMsg.style.display = 'block';
                 document.getElementById('emailForm').reset();
                 
             } catch (error) {
-                errorMsg.textContent = '❌ ' + error.message;
+                console.error('Error:', error);
+                errorMsg.textContent = '❌ Error: ' + error.message;
                 errorMsg.style.display = 'block';
             }
         });
