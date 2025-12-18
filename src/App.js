@@ -10,29 +10,26 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const formData = {
-      email,
-      subject,
-      message,
-      scheduleTime
-    };
-
-    try {
-      const response = await fetch('/.netlify/functions/schedule-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      alert(result.message || 'Email scheduled successfully!');
-    } catch (error) {
-      alert('Failed to schedule email: ' + error.message);
+    // Demo mode - GitHub Pages doesn't support backend
+    const scheduledDate = new Date(scheduleTime);
+    const now = new Date();
+    const delay = scheduledDate - now;
+    
+    if (delay < 0) {
+      alert('Please select a future date and time.');
+      return;
     }
+
+    const days = Math.floor(delay / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((delay % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    alert(`✉️ Demo Mode\n\nYour email would be scheduled to:\n📧 ${email}\n📝 Subject: ${subject}\n📅 In ${days} days and ${hours} hours\n\n⚠️ Note: This is a demo. To actually send emails, you'll need to deploy a backend service (like Netlify Functions, Vercel, or AWS Lambda).`);
+    
+    // Reset form
+    setEmail('');
+    setSubject('');
+    setMessage('');
+    setScheduleTime('');
   };
 
   return (

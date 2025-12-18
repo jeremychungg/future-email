@@ -1,6 +1,47 @@
-# Getting Started with Create React App
+# Future Email App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Send emails to the future! This app allows you to schedule emails to be sent at a specific date and time.
+
+## 🚀 Live Demo
+
+Visit: **https://YOUR_USERNAME.github.io/future-email**
+
+*(Update this URL after deploying)*
+
+## Deploy to GitHub Pages
+
+1. **Update package.json**: Change the `homepage` field to match your GitHub username and repo:
+   ```json
+   "homepage": "https://YOUR_USERNAME.github.io/YOUR_REPO_NAME"
+   ```
+
+2. **Push to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+   git push -u origin main
+   ```
+
+3. **Deploy**:
+   ```bash
+   npm install
+   npm run deploy
+   ```
+
+That's it! Your app will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME`
+
+## ⚠️ Note: Demo Mode
+
+The GitHub Pages version runs in **demo mode** - it doesn't actually send emails (GitHub Pages only hosts static files). To send real emails, you'll need to deploy a backend service separately (see Backend Setup below).
+
+## Backend Setup (Optional)
+
+To make this app functional with real email sending, deploy the backend code in the `netlify/` folder to a service like:
+- **Netlify Functions**
+- **Vercel Serverless Functions**
+- **AWS Lambda**
+- **Any Node.js server**
 
 ## Available Scripts
 
