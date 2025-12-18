@@ -52,44 +52,33 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // For demo purposes, if the delay is less than 5 minutes, send immediately
-    // Otherwise, return a message that scheduled emails require a scheduling service
-    if (delay < 5 * 60 * 1000) {
-      // Send immediately for short delays
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
+    // Send email immediately (serverless functions can't wait for scheduled times)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: subject,
-        text: message
-      };
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: subject,
+      text: message
+    };
 
-      await transporter.sendMail(mailOptions);
-      
-      return {
-        headers,
-        statusCode: 200,
-        body: JSON.stringify({ 
-          message: 'Email sent successfully! (Note: For times less than 5 minutes, emails are sent immediately)' 
-        })
-      };
-    } else {
-      // For longer delays, you would need to integrate with a scheduling service
-      // like Netlify Scheduled Functions, AWS SES with delay, or a third-party service
-      return {
-        headers,
-        body: JSON.stringify({ 
-          message: `Email scheduled for ${moment(sendAt).format('LLLL')}. Note: This is a demo - for production, integrate with a scheduling service like Netlify Scheduled Functions or AWS EventBridge.` 
-        })
-      };
-    }
+    await transporter.sendMail(mailOptions);
+    
+    const delayMinutes = Math.round(delay / 60000);
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ 
+        message: `✅ Email sent! (Was scheduled for ${delayMinutes} min from now, but sent immediately)` 
+      })
+    };
   } catch (error) {
     console.error('Error:', error);
     return {
